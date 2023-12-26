@@ -1,17 +1,26 @@
-function calcularIVA(numero) {
-  const IVA = 0.21;
+let precios = [];
 
-  if (isNaN(numero)) {
+function agregarPrecio() {
+  const precioInput = document.getElementById('precio');
+  const precio = parseFloat(precioInput.value);
+
+  if (isNaN(precio)) {
     console.log("Por favor, ingrese un número válido.");
     return;
   }
 
+  precios.push(precio);
+  precioInput.value = "";
+
+  mostrarResultados();
+}
+
+function calcularIVA(numero) {
+  const IVA = 0.21;
+
   let iva = numero * IVA;
-
   let totalConIVA = numero + iva;
-
   let descuento = calcularDescuento(totalConIVA);
-
   let totalAPagar = totalConIVA - descuento;
 
   let objeto = {
@@ -35,18 +44,23 @@ function calcularDescuento(monto) {
   return descuento;
 }
 
-let deseaCalcular = true;
-let precios = [];
-let precio;
-do {
-  precio = prompt("Ingrese un precio para calcular el IVA (escriba 'salir' para terminar)");
+function mostrarResultados() {
+  const resultadosDiv = document.getElementById('resultados');
+  resultadosDiv.innerHTML = "";
 
-  if (precio.toLowerCase() === "salir") {
-    deseaCalcular = false;
-  } else {
-    precios.push(parseFloat(precio));
-  }
-} while (deseaCalcular);
+  precios.forEach(function(precio) {
+    let resultado = calcularIVA(precio);
 
-let resultados = precios.map(calcularIVA);
-console.log(resultados);
+    let resultadoHTML = `
+      <p>
+        Precio sin IVA: $${resultado.precioSinIVA}<br>
+        Monto IVA: $${resultado.montoIVA}<br>
+        Precio total con IVA: $${resultado.precioTotalConIVA}<br>
+        Descuento: $${resultado.descuento}<br>
+        Total a pagar: $${resultado.totalAPagar}
+      </p>
+    `;
+
+    resultadosDiv.innerHTML += resultadoHTML;
+  });
+}

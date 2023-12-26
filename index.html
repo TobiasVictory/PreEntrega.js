@@ -1,14 +1,19 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./style.css/style.css">
-    <title>Calulador de descuentos e iva</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="./style.css/style.css">
+<title>Calculadora de IVA</title>
 </head>
 <body>
-    <h1>Calcula IVA y Descuento del 10% o 20% </h1>
-
+    <h1>Calculadora de IVA</h1>
+    <div>
+        <label for="precio">Ingresar precio:</label>
+        <input type="text" id="precio">
+        <button onclick="agregarPrecio()">Calcular IVA y Descuento</button>
+        </div>
+        <div id="resultados"></div>
 
     <script src="main.js"></script>
 </body>
