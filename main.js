@@ -1,4 +1,4 @@
-let precios = [];
+let precios = cargarPreciosDesdeLocalStorage() || [];
 
 function agregarPrecio() {
   const precioInput = document.getElementById('precio');
@@ -12,7 +12,16 @@ function agregarPrecio() {
   precios.push(precio);
   precioInput.value = "";
 
+  guardarPreciosEnLocalStorage(precios);
   mostrarResultados();
+
+  if (isNaN(precio)) {
+    tosify.notify({
+      message: 'Por favor, ingrese un número válido.',
+      type: 'error'
+    });
+    return;
+  }
 }
 
 function calcularIVA(numero) {
@@ -63,4 +72,13 @@ function mostrarResultados() {
 
     resultadosDiv.innerHTML += resultadoHTML;
   });
+}
+
+function guardarPreciosEnLocalStorage(precios) {
+  localStorage.setItem('precios', JSON.stringify(precios));
+}
+
+function cargarPreciosDesdeLocalStorage() {
+  const preciosJSON = localStorage.getItem('precios');
+  return JSON.parse(preciosJSON);
 }
