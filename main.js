@@ -1,4 +1,18 @@
-let precios = cargarPreciosDesdeLocalStorage() || [];
+let precios = [];
+
+fetchPreciosDesdeLocalStorage();
+
+function fetchPreciosDesdeLocalStorage() {
+  fetch('ruta_al_local_storage')
+    .then(response => response.json())
+    .then(data => {
+      precios = data;
+      mostrarResultados();
+    })
+    .catch(error => {
+      console.error('Error al cargar los precios desde el local storage:', error);
+    });
+}
 
 function agregarPrecio() {
   const precioInput = document.getElementById('precio');
@@ -14,14 +28,6 @@ function agregarPrecio() {
 
   guardarPreciosEnLocalStorage(precios);
   mostrarResultados();
-
-  if (isNaN(precio)) {
-    tosify.notify({
-      message: 'Por favor, ingrese un número válido.',
-      type: 'error'
-    });
-    return;
-  }
 }
 
 function calcularIVA(numero) {
@@ -75,10 +81,30 @@ function mostrarResultados() {
 }
 
 function guardarPreciosEnLocalStorage(precios) {
-  localStorage.setItem('precios', JSON.stringify(precios));
+  fetch('ruta_al_local_storage', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(precios)
+  })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Precios guardados en el local storage:', data);
+    })
+    .catch(error => {
+      console.error('Error al guardar los precios en el local storage:', error);
+    });
 }
 
 function cargarPreciosDesdeLocalStorage() {
-  const preciosJSON = localStorage.getItem('precios');
-  return JSON.parse(preciosJSON);
+  fetch('ruta_al_local_storage')
+    .then(response => response.json())
+    .then(data => {
+      precios = data;
+      mostrarResultados();
+    })
+    .catch(error => {
+      console.error('Error al cargar los precios desde el local storage:', error);
+    });
 }
