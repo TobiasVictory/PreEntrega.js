@@ -1,25 +1,24 @@
 let precios = [];
 
-fetchPreciosDesdeLocalStorage();
+precios = fetchPreciosDesdeLocalStorage();
 
 function fetchPreciosDesdeLocalStorage() {
-  fetch('ruta_al_local_storage')
-    .then(response => response.json())
-    .then(data => {
-      precios = data;
-      mostrarResultados();
-    })
-    .catch(error => {
-      console.error('Error al cargar los precios desde el local storage:', error);
-    });
+  return new Promise((resolve, reject) => {
+    try {
+      const data = localStorage.getItem('precios');
+      resolve(JSON.parse(data));
+    } catch (error) {
+      reject(`Error al cargar los precios desde el local storage: ${error}`);
+    }
+  });
 }
 
 function agregarPrecio() {
   const precioInput = document.getElementById('precio');
   const precio = parseFloat(precioInput.value);
 
-  if (isNaN(precio)) {
-    console.log("Por favor, ingrese un número válido.");
+  if (isNaN(precio) || precio <= 0) {
+    console.log("Por favor, ingrese un número válido mayor a cero.");
     return;
   }
 
@@ -63,43 +62,36 @@ function mostrarResultados() {
   const resultadosDiv = document.getElementById('resultados');
   resultadosDiv.innerHTML = "";
 
-  precios.forEach(function(precio) {
-    let resultado = calcularIVA(precio);
+  if (precios.length > 0) {
+    resultadosDiv.innerHTML = precios.map(precio => {
+      let resultado = calcularIVA(precio);
 
-    let resultadoHTML = `
-      <p>
-        Precio sin IVA: $${resultado.precioSinIVA}<br>
-        Monto IVA: $${resultado.montoIVA}<br>
-        Precio total con IVA: $${resultado.precioTotalConIVA}<br>
-        Descuento: $${resultado.descuento}<br>
-        Total a pagar: $${resultado.totalAPagar}
-      </p>
-    `;
-
-    resultadosDiv.innerHTML += resultadoHTML;
-  });
+      return `
+        <p>
+          Precio sin IVA: $${resultado.precioSinIVA}<br>
+          Monto IVA: $${resultado.montoIVA}<br>
+          Precio total con IVA: $${resultado.precioTotalConIVA}<br>
+          Descuento: $${resultado.descuento}<br>
+          Total a pagar: $${resultado.totalAPagar}
+        </p>
+      `;
+    }).join('');
+  }
 }
 
 function guardarPreciosEnLocalStorage(precios) {
-  fetch('ruta_al_local_storage', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(precios)
-  })
-    .then(response => response.json())
-    .then(data => {
-      console.log('Precios guardados en el local storage:', data);
-    })
-    .catch(error => {
-      console.error('Error al guardar los precios en el local storage:', error);
-    });
+  return new Promise((resolve, reject) => {
+    try {
+      localStorage.setItem('precios', JSON.stringify(precios));
+      resolve();
+    } catch (error) {
+      reject(`Error al guardar los precios en el local storage: ${error}`);
+    }
+  });
 }
 
 function cargarPreciosDesdeLocalStorage() {
-  fetch('ruta_al_local_storage')
-    .then(response => response.json())
+  return fetchPreciosDesdeLocalStorage()
     .then(data => {
       precios = data;
       mostrarResultados();
@@ -108,3 +100,22 @@ function cargarPreciosDesdeLocalStorage() {
       console.error('Error al cargar los precios desde el local storage:', error);
     });
 }
+
+const toastify = document.querySelector("#toastify");
+
+toastify.addEventListener("click", () => {
+    Toastify({
+        text: "Click",
+        duration: 3000,
+        destination: "https://ar.pinterest.com/pin/668925350927945929/",
+        newWindow: true,
+        close: true,
+        gravity: "top", 
+        position: "center", 
+        stopOnFocus: true,
+        style: {
+        background: "linear-gradient(to right, #00b09b, #96c93d)",
+},
+      onClick: function(){} 
+}).showToast();
+})
